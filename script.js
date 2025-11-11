@@ -43,6 +43,7 @@ const CATALOG_ITEMS =[
 const modalElement = document.querySelector('#detalheModal');
 const modalTitle = modalElement.querySelector('.modal-title');
 const modalBody = modalElement.querySelector('.modal-body');
+const modalAction = modalElement.querySelector('.btn-success');
 
 // 1. Ouvinte para popular o modal ANTES de ser exibido.
 modalElement.addEventListener('show.bs.modal', function (event) {
@@ -59,10 +60,55 @@ modalElement.addEventListener('show.bs.modal', function (event) {
 
         // Cria o HTML de detalhes
         let detailsHTML = `
-        <p class=",b-1><strong>Ctegoria:</strong> <span class="badge bg-secondary">${item.categoria}</span></p>
+        <p class="b-1"><strong>Categoria:</strong> <span class="badge bg-secondary">${item.categoria}</span></p>
         <p class="fs-4 fw-bold text-success mb-3">Preço: ${item.preco}</p>
         <hr>
         <p>${item.detalhes}</p>
         `;
+
+        // Adiciona campos específicos
+        if (item.categoria === 'Livros') {
+            detailsHTML += `<p><strong>Autor:</strong> ${item.autor}</p>`;
+            detailsHTML += `<p><strong>Lançamento:</strong> ${item.lancamento}</p>`;
+            detailsHTML += `<p class="text-info><strpng>Estoque Disponível:</strong> ${item.estoque} unidades</p>`;
+        } else if (item.categoria === 'Artesanato') {
+            detailsHTML += `<p><strong>Material:</strong> ${item.material}</p>`;
+            detailsHTML += `<p><strong>Dimensões/Comprimento:</strong> ${item.dimensoes || item.comprimento}</p>`;
+            detailsHTML += `<p class="text-info><strpng>Peças Exclusivas em Estoque:</strong> ${item.estoque} unidades</p>`;
+        }
+
+        // Insere o HTML no corpo do modal
+        modalBody.innerHTML = detailsHTML;
+
+        // Ao clicar no botão "Adicionar ao Carrinho"
+        modalAction.onclick = () => {
+            console.log(`Ação: Item '${item.titulo}' (ID: ${item.id}) adicionado ao carrinho`);
+            // Em uma aplicação real, você faria uma chamada de API aqui.
+            // Para este exemplo, apenas fechamos o modal e mostramos o log.
+            const bsModal = bootstrap.Modal.getInstance(modalElement);
+            if (bsModal) bsModal.hide();
+        }
     }
 });
+
+// 2. Ouvinte para o funcionário de busca (simples).
+const searchInput = document.getElementById ('search-input');
+const searchButton = document.getElementById ('search-button');
+const items = document.querySelectorAll ('.item-catalogo');
+
+function executarPesquisa(event) {
+
+}
+
+// Adiciona evento ao clicar no botão "Buscar"
+searchButton.addEventListener('click', executarPesquisa);
+// Adiciona evento ao pressionar qualquer tecla no campo  "Buscar item"
+searchInput.addEventListener('keyup', (event) => {
+    //  Permite buscar ao pressionar Enter
+    if (event.key == 'Enter') {
+        executarPesquisa(event);
+    } else if(searchInput.ariaValueMax.trim() ==="") {
+        // Mostra todos os itens se a busca for apagada
+        executarPesquisa(event);
+    }
+})
