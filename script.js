@@ -52,12 +52,12 @@ modalElement.addEventListener('show.bs.modal', function (event) {
     const itemId = parseInt(button.getAttribute('data-item-id'));
     // Procura pelo ID do item clickado no vetor "CATALOG_ITEMS".
     const item = CATALOG_ITEMS.find(i => i.id == itemId);
-
+    
     // Se o item foi encontrado no vetor "CATALOG_ITEMS".
     if (item) {
         // Atualiza o Título do Modal.
         modalTitle.textContent = item.titulo;
-
+        
         // Cria o HTML de detalhes
         let detailsHTML = `
         <p class="b-1"><strong>Categoria:</strong> <span class="badge bg-secondary">${item.categoria}</span></p>
@@ -65,7 +65,7 @@ modalElement.addEventListener('show.bs.modal', function (event) {
         <hr>
         <p>${item.detalhes}</p>
         `;
-
+        
         // Adiciona campos específicos
         if (item.categoria === 'Livros') {
             detailsHTML += `<p><strong>Autor:</strong> ${item.autor}</p>`;
@@ -76,10 +76,10 @@ modalElement.addEventListener('show.bs.modal', function (event) {
             detailsHTML += `<p><strong>Dimensões/Comprimento:</strong> ${item.dimensoes || item.comprimento}</p>`;
             detailsHTML += `<p class="text-info><strpng>Peças Exclusivas em Estoque:</strong> ${item.estoque} unidades</p>`;
         }
-
+        
         // Insere o HTML no corpo do modal
         modalBody.innerHTML = detailsHTML;
-
+        
         // Ao clicar no botão "Adicionar ao Carrinho"
         modalAction.onclick = () => {
             console.log(`Ação: Item '${item.titulo}' (ID: ${item.id}) adicionado ao carrinho`);
@@ -97,7 +97,25 @@ const searchButton = document.getElementById ('search-button');
 const items = document.querySelectorAll ('.item-catalogo');
 
 function executarPesquisa(event) {
-
+    // Previne o envio do formulário para o servidor (back-end)
+    event.preventDefault();
+    // Obtém o valor do campo de busca em letras minúsculas (.toLowerCase())
+    const query = searchInput.value.toLowerCase().trim();
+    
+    // Para cada item do catálago (quatro itens)
+    items.forEach(item => {
+        // Obtém o título e o nome da categoria do item atual em letras minúsculas
+        const title = item.querySelector('.card-title').textContent.toLowerCase();
+        const category = item.getAttribute('data-categoria').toLowerCase();
+        
+        // Verifica se o título ou a categoria do item atual incluem o valor digitado no campo de busca (query)
+        // Se o valor do campo de busca (query == "") for em branco, exibe todos os itens
+        if (title.includes(query) || category.includes(query) || query == "") {
+            item.style.display = 'block'; // Mostra o item
+        } else {
+            item.style.display = 'none'; // Esconde o item
+        }
+    });
 }
 
 // Adiciona evento ao clicar no botão "Buscar"
@@ -107,8 +125,29 @@ searchInput.addEventListener('keyup', (event) => {
     //  Permite buscar ao pressionar Enter
     if (event.key == 'Enter') {
         executarPesquisa(event);
-    } else if(searchInput.ariaValueMax.trim() ==="") {
+    } else if(searchInput.value.trim() === "") {
         // Mostra todos os itens se a busca for apagada
         executarPesquisa(event);
     }
 })
+
+// 3. Atualiza os itens do catálogo
+items.forEach((card, index) => {
+    const img = card.querySelector('img');
+    const title = card.querySelector('.card-title');
+    const category = card.querySelectorAll('.card-text')[0];
+    const description = card.querySelectorAll('.card-text')[1];
+
+    const item = CATALOG_ITEMS.find(i => i.id === (index + 1));
+
+   if (item) {
+        // Atualiza o texto da imagem do cartão com a categoria do item
+        img.src = img.src.replace(/\?text=(.*)/, "?text=" + item.categoria.toUpperCase());
+        // Atualiza o texto do título do item
+        title.textContent = item.titulo;
+        // Atualiza a categoria do item 
+        category.textContent = "Categoria: " + item.categoria;
+        // Atualiza a descrição do item
+        description.textContent = item.detalhes;
+   }
+  });
