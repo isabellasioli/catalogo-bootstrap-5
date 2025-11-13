@@ -137,10 +137,10 @@ items.forEach((card, index) => {
     const title = card.querySelector('.card-title');
     const category = card.querySelectorAll('.card-text')[0];
     const description = card.querySelectorAll('.card-text')[1];
-
+    
     const item = CATALOG_ITEMS.find(i => i.id === (index + 1));
-
-   if (item) {
+    
+    if (item) {
         // Atualiza o texto da imagem do cartão com a categoria do item
         img.src = img.src.replace(/\?text=(.*)/, "?text=" + item.categoria.toUpperCase());
         // Atualiza o texto do título do item
@@ -149,5 +149,37 @@ items.forEach((card, index) => {
         category.textContent = "Categoria: " + item.categoria;
         // Atualiza a descrição do item
         description.textContent = item.detalhes;
-   }
-  });
+    }
+});
+
+// 4. Adiciona funcionalidade de cookies (persistência) dos itens adicionador ao carrinho
+const CART_STORAGE_KEY = 'shopping_cart';
+
+function obterCarrinhoDoNavegador() {
+    // Tenta ler o cookie do navegador
+    try {
+        const cookie = localStorage.getItem(CART_STORAGE_KEY);
+        return JSON.parse(cookie);
+    } catch (e) {
+        console.error("Falha ao ler o cookie do armazenamento local.");
+    }
+    // Retorna um vetor vazio em caso de falha
+    return [];
+}
+
+function salvarCookieCarrinho(itensCarrinho) {
+    try {
+    // Salva os itens do carrinho em formato JSON no navegador
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(itensCarrinho));
+    } catch (e) {
+        console.error("ERRO: Falha ao salvar carrinho no navegador. Erro: ", e);
+    }
+}
+
+function adicionaItemCarrinho(itemId) {
+    // Obtém os itens atuais do carrinho
+    const carrinho = obterCarrinhoDoNavegador();
+    carrinho.push(itemId); // Adicionar o ID do item recebido como parâmetro da função ao carrinho
+    salvarCookieCarrinho(); // Atualiza o cookie do carrinho
+    atualizaContadorCarrinho(); // Atualiza o número de itens no HTML do carrinho navbar
+}
