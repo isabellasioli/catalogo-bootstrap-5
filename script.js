@@ -210,3 +210,27 @@ function atualizaContadorCarrinho() {
 
 // Carrega o número de intens no carrinho ao carregar a página HTML
 atualizaContadorCarrinho();
+
+// 5. Renderiza o conteúdo do carrinho 
+const carrinho_btn = document.getElementById("cart-button");
+
+carrinho_btn.addEventListener("click", function() {
+    
+    const carrinho_secao = document.getElementById("cart-section");
+    carrinho_secao.classList.toggle("d-none");
+    
+    if (carrinho_secao.classList.contains("d-none")) {
+        return;
+    }
+    const carrinho_recibo = document.getElementById("cart-list");
+    carrinho_recibo.innerHTML = "";
+    
+    const itensCarrinho = obterCarrinhoDoNavegador();
+    
+    itensCarrinho.forEach(itemCarrinho => {
+        const li = document.createElement("li");
+        li.innerHTML = itemCarrinho;
+        
+        carrinho_recibo.appendChild(li);
+    });
+})
