@@ -14,6 +14,7 @@ const CATALOG_ITEMS =[
         titulo: "Manual de assassinato para boas meninas",
         categoria: "Livros",
         detalhes: "Um romance de suspense juvenil que segue a investigação de um crime arquivado por uma estudante do ensino médio.",
+        preco: "R$ 50,90",
         estoque: 10,
         autor: "Holly Jackson",
         lancamento: "2022"
@@ -40,7 +41,8 @@ const CATALOG_ITEMS =[
     },
 ];
 
-const formatCurrency = (value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL'});
+const formatCurrency = (value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
 
 /* Adiciona listeeners aos botões "Ver Detalhes" para popular o modal dinamicamente.*/
 const modalElement = document.querySelector('#detalheModal');
