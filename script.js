@@ -4,7 +4,7 @@ const CATALOG_ITEMS =[
         titulo: "A última casa da rua Needless",
         categoria: "Livros",
         detalhes: "Um thriller de suspense aterrorizante que envolve um assassinato, uma criança sequestrada... e uma terrível vingança.",
-        preco: "R$ 57,70",
+        preco: 57.70,
         estoque: 15,
         autor: "Catriona Ward",
         lancamento: "2022"
@@ -14,7 +14,7 @@ const CATALOG_ITEMS =[
         titulo: "Manual de assassinato para boas meninas",
         categoria: "Livros",
         detalhes: "Um romance de suspense juvenil que segue a investigação de um crime arquivado por uma estudante do ensino médio.",
-        preco: "R$ 50,90",
+        preco: 50.90,
         estoque: 10,
         autor: "Holly Jackson",
         lancamento: "2022"
@@ -24,7 +24,7 @@ const CATALOG_ITEMS =[
         titulo: "Corte de Espinhos e Rosas",
         categoria: "Livros",
         detalhes: "Um livro de fantasia de tirar o fôlego. Memorável em todos os aspectos, com personagens complexos, enredo rico e um magnífico mundo...",
-        preco: "R$ 60,99",
+        preco: 60.99,
         estoque: 20,
         autor: "Sarah J. Maas",
         lancamento: "2015"
@@ -34,9 +34,9 @@ const CATALOG_ITEMS =[
         titulo: "Marca Página Personalizado",
         categoria: "Artesanato",
         detalhes: "Um marca página personalizado de acordo com sua preferência e plastificado.",
-        preco: "R$ 5,90",
+        preco: 5.90,
         estoque: 20,
-        material: "Papel 180g com a imagem escolhida e polaseal(plástico usado para plastificação).",
+        material: "Papel 180g com a imagem escolhida e polaseal (plástico usado para plastificação).",
         dimensoes: "50cm x 160cm"
     },
 ];
@@ -230,20 +230,41 @@ carrinho_btn.addEventListener("click", function() {
     const carrinho_recibo = document.getElementById("cart-list");
     carrinho_recibo.innerHTML = "";
     
-    const itensCarrinho = obterCarrinhoDoNavegador();
-    
-    itensCarrinho.forEach(itemId => {
-        const item = CATALOG_ITEMS.find(i => i.id === itemId);
+    const itensCarrinho = obterCarrinhoDoNavegador(); // Lê os cookies do navegador
+    const itensCount = {};
 
+    // O cookie retorna apenos o ID do item no carrinho 
+    // Soma o número de vezes que determinado item foi adicionado ao carrinho
+    itensCarrinho.forEach(itemId => {
+        itensCount[itemId] = (itensCount[itemId] || 0) + 1; // Junta os itens iguais
+    });
+    
+    // Vertical que armazena a soma total do carrinho
+    let cartTotal = 0;
+
+    // Para cada ID de item no carrinho
+    Object.keys(itensCount).forEach(itemId => {
+        // O cookie retorna apenas o ID do item no carrinho 
+        const item = CATALOG_ITEMS.find(i => i.id === parseInt(itemId));
+        const itemQtd = itensCount[itemId];
+
+        const itemSubtotal = item.preco * itemQtd;
+        cartTotal += itemSubtotal;
+
+        // Adicionar o item do carrinho ao recibo
         const li = document.createElement("li");
         li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
         li.innerHTML = `
             <div>
                 <h6 class="mb-1">${item.titulo}</h6>
+                <small class="text-muted">Qtd: ${itemQtd} x ${formatCurrency(item.preco)}</small>
             </div>
-            <span class="fw-bold text-success">${formatCurrency(item.preco)}</span>
+            <span class="fw-bold text-success">${formatCurrency(itemSubtotal)}</span>
             `;
         
         carrinho_recibo.appendChild(li);
     });
-})
+
+    const cartTotalEl = document.getElementById("cart-total");
+    cartTotalEl.innerHTML = formatCurrency(cartTotal);
+});
